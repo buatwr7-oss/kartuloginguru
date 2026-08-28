@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetak Kartu Login Guru - SMK Wiraguna</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #eef2f7; padding: 20px; }
+        .print-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; max-width: 800px; margin: 0 auto; }
+        
+        /* Tema Kartu Cerah / Terang */
+        .teacher-card { 
+            background: #ffffff; 
+            border: 2px solid #1e3c72; 
+            border-radius: 14px; 
+            padding: 15px; 
+            box-shadow: 0 8px 20px rgba(30, 60, 114, 0.12); 
+            color: #333;
+            position: relative; 
+            overflow: hidden; 
+        }
+        
+        .card-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            border-bottom: 2px solid #f1c40f; 
+            padding-bottom: 10px; 
+            margin-bottom: 12px; 
+        }
+
+        /* Styling Avatar Box Gambar Khusus Guru */
+        .rpg-avatar-box {
+            width: 50px;
+            height: 50px;
+            background: #f8f9fa;
+            border: 2px solid #1e3c72;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        .rpg-avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-header h3 { font-size: 15px; color: #1e3c72; margin: 0; font-weight: 700; letter-spacing: 0.5px; }
+        .card-header p { font-size: 10px; color: #b7950b; font-weight: 700; margin: 0; }
+        
+        /* Layout Grid agar Sejajar Sempurna */
+        .card-body { 
+            display: grid;
+            grid-template-columns: 75px 1fr;
+            gap: 5px 8px;
+            font-size: 11px; 
+            color: #444; 
+            align-items: center;
+        }
+        .card-body .label { color: #666; font-weight: 600; }
+        .card-body .value { font-weight: 700; color: #1e3c72; word-break: break-all; }
+        
+        .badge-role { 
+            grid-column: span 2;
+            display: inline-block; 
+            background: #1e3c72; 
+            color: #f1c40f; 
+            font-size: 9px; 
+            padding: 4px 8px; 
+            border-radius: 5px; 
+            margin-top: 8px; 
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 5px rgba(30, 60, 114, 0.2);
+        }
+        
+        /* Tombol Cetak */
+        .no-print { text-align: center; margin-bottom: 20px; }
+        .btn-print { padding: 10px 20px; background: #1e3c72; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(30,60,114,0.3); }
+        .btn-print:active { transform: scale(0.98); }
+
+        @media print {
+            body { background: #fff; padding: 0; }
+            .no-print { display: none; }
+            .teacher-card { border: 1.5px solid #000; box-shadow: none; break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="no-print">
+        <button class="btn-print" onclick="window.print()">🖨️ Cetak Semua Kartu Guru</button>
+    </div>
+
+    <div class="print-container" id="cardContainer"></div>
+
+    <script>
+        // Data lengkap guru
+        const daftarGuru = [
+            { nama: "Neneng Teti Cahyani", usernama: "nenengcahyani", pass: "wiraguna123", role: "Kepala Sekolah", jk: "P" },
+            { nama: "ADE YUNIATI", usernama: "adeyuniati", pass: "wiraguna124", role: "Wali Kelas", jk: "P" },
+            { nama: "Aulia Rahmi Sanfitriani", usernama: "auliarahmi", pass: "wiraguna125", role: "Guru Mapel", jk: "P" },
+            { nama: "Dhillah Karina", usernama: "dhillahkarina", pass: "wiraguna126", role: "Kesiswaan", jk: "P" },
+            { nama: "Dian Asri Paturrohmah", usernama: "dianasri", pass: "wiraguna127", role: "Wali Kelas", jk: "P" },
+            { nama: "Dian Herdiana", usernama: "dianherdiana", pass: "wiraguna128", role: "Guru Mapel", jk: "L" },
+            { nama: "Eneng Resti Kulsum", usernama: "restikulsum", pass: "wiraguna129", role: "Guru Mapel", jk: "P" },
+            { nama: "Iwan Setiawan", usernama: "iwansetiawan", pass: "wiraguna130", role: "Guru Mapel", jk: "L" },
+            { nama: "Livia Amalia", usernama: "liviaamalia", pass: "wiraguna131", role: "Guru Mapel", jk: "P" },
+            { nama: "Wini Asiyah Nurwalifah", usernama: "winiasiyah", pass: "wiraguna136", role: "Wali Kelas", jk: "P" },
+            { nama: "Ahmad Qabil Jaelani", usernama: "ahmadqabil", pass: "wiraguna139", role: "Guru Mapel", jk: "L" },
+            { nama: "Ahmad Jauhari", usernama: "ahmadjauhari", pass: "wiraguna140", role: "Guru Mapel", jk: "L" },
+            { nama: "Super Admin", usernama: "AdminS", pass: "admins123", role: "Super Admin", jk: "A" }
+        ];
+
+        const container = document.getElementById("cardContainer");
+        daftarGuru.forEach(g => {
+            // Logika penentuan avatar (Laki-laki, Perempuan, atau Super Admin)
+            let avatarSrc = "assets/foto_guru/guru_l.webp";
+            if (g.jk === "P") {
+                avatarSrc = "assets/foto_guru/guru_p.webp";
+            } else if (g.jk === "A") {
+                avatarSrc = "assets/foto_guru/admin.webp";
+            }
+
+            container.innerHTML += `
+                <div class="teacher-card">
+                    <div class="card-header">
+                        <div class="rpg-avatar-box">
+                            <img src="${avatarSrc}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                        </div>
+                        <div>
+                            <h3>SMK WIRAGUNA LIMBANGAN</h3>
+                            <p>KARTU AKSES PORTAL GURU 🛡️</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="label">Nama</div>
+                        <div class="value">: ${g.nama}</div>
+                        <div class="label">Username</div>
+                        <div class="value">: ${g.usernama}</div>
+                        <div class="label">Password</div>
+                        <div class="value">: ${g.pass}</div>
+                        <div class="badge-role">JABATAN: ${g.role.toUpperCase()}</div>
+                    </div>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
